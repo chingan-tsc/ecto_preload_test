@@ -2,13 +2,12 @@ defmodule PreloadTest.Post do
   use Ecto.Schema
   import Ecto.Changeset
 
-
   schema "posts" do
-    field :name, :string
+    field(:name, :string)
 
-    has_many :comments, PreloadTest.Comment
-    many_to_many :post_tags, PreloadTest.Tag, join_through: "post_tags"
-    has_many :comment_tags, through: [:comments, :tags]
+    has_many(:comments, PreloadTest.Comment)
+
+    many_to_many(:tags, PreloadTest.Tag, join_through: "post_tags")
 
     timestamps()
   end

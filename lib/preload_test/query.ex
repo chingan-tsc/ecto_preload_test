@@ -4,41 +4,19 @@ defmodule Query do
   alias PreloadTest.Tag
   alias PreloadTest.Post
 
-  def preload_comments() do
-    comment_fn = fn post_ids ->
-      from(c in Comment,
-        where: c.post_id in (^post_ids))
-      |> PreloadTest.Repo.all()
-    end
+  alias PreloadTest.Repo
 
-    from p in Post,
-      preload: [comments: ^comment_fn]
+  def list_posts_a() do
+    preload_query = from(t in Tag, join: c in assoc(t, :comment), preload: [comment: c])
+
+    from(p in Post, preload: [tags: ^preload_query])
+    |> PreloadTest.Repo.all()
   end
 
-  def preload_post_tags() do
-    post_tag_fn = fn post_ids ->
-      from(t in Tag,
-        inner_join: pt in "post_tags", on: t.id == pt.tag_id,
-        where: pt.post_id in (^post_ids),
-        select: %{t | post_id: pt.post_id})
-      |> PreloadTest.Repo.all()
-    end
+  def list_posts_b() do
+    preload_query = from(t in Tag, join: c in assoc(t, :comment), preload: [comment: []])
 
-    from p in Post,
-      preload: [post_tags: ^post_tag_fn]
-  end
-
-  def preload_comment_tags() do
-    comment_tag_fn = fn post_ids ->
-      from(t in Tag,
-        inner_join: c in Comment, on: t.comment_id == c.id,
-        where: c.post_id in (^post_ids),
-        select: %{t | post_id: c.post_id})
-      |> PreloadTest.Repo.all()
-    end
-
-    from p in Post,
-      preload: [comment_tags: ^comment_tag_fn]
+    from(p in Post, preload: [tags: ^preload_query])
+    |> PreloadTest.Repo.all()
   end
 end
-
