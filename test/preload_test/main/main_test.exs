@@ -59,6 +59,27 @@ defmodule PreloadTest.MainTest do
 
       IO.inspect(Query.list_posts_a())
       IO.inspect(Query.list_posts_b())
+
+      assert Query.list_posts_a() == Query.list_posts_b()
+    end
+
+    test "preload many_to_many through preload query with non overlapping tags" do
+      post1 = post_fixture()
+      post2 = post_fixture()
+
+      comment1 = comment_fixture()
+      comment2 = comment_fixture()
+
+      tag1 = tag_fixture(%{comment_id: comment1.id})
+      tag2 = tag_fixture(%{comment_id: comment2.id})
+
+      post_tag_fixture(%{post_id: post1.id, tag_id: tag1.id})
+      post_tag_fixture(%{post_id: post2.id, tag_id: tag2.id})
+
+      IO.inspect(Query.list_posts_a())
+      IO.inspect(Query.list_posts_b())
+
+      assert Query.list_posts_a() == Query.list_posts_b()
     end
   end
 end
