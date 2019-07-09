@@ -57,8 +57,8 @@ defmodule PreloadTest.MainTest do
       post_tag_fixture(%{post_id: post2.id, tag_id: tag1.id})
       post_tag_fixture(%{post_id: post1.id, tag_id: tag2.id})
 
-      IO.inspect(Query.list_posts_a())
-      IO.inspect(Query.list_posts_b())
+      # IO.inspect(Query.list_posts_a())
+      # IO.inspect(Query.list_posts_b())
 
       assert Query.list_posts_a() == Query.list_posts_b()
     end
@@ -76,10 +76,60 @@ defmodule PreloadTest.MainTest do
       post_tag_fixture(%{post_id: post1.id, tag_id: tag1.id})
       post_tag_fixture(%{post_id: post2.id, tag_id: tag2.id})
 
-      IO.inspect(Query.list_posts_a())
-      IO.inspect(Query.list_posts_b())
+      # IO.inspect(Query.list_posts_a())
+      # IO.inspect(Query.list_posts_b())
 
       assert Query.list_posts_a() == Query.list_posts_b()
     end
+
+    test "prepare_changeset failure test a" do
+      p1 = post_fixture()
+
+      # IO.inspect(p1)
+
+      c1 =
+        Ecto.build_assoc(p1, :comments)
+        |> Ecto.Changeset.cast(%{name: "some text"}, [:name, :post_id])
+        |> PreloadTest.Repo.insert!()
+
+      # IO.inspect(c1)
+
+      assert c1.post_id == p1.id
+
+      c2 = PreloadTest.Repo.get(PreloadTest.Comment, c1.id)
+
+      assert c2.post_id == p1.id
+    end
+
+    test "prepare_changeset failure test b" do
+      p1 = post_fixture()
+
+      # IO.inspect(p1)
+
+      c1 =
+        Ecto.build_assoc(p1, :comments)
+        |> IO.inspect()
+        |> Ecto.Changeset.cast(%{name: "some text"}, [:name, :post_id])
+        |> track_changes()
+        |> PreloadTest.Repo.insert!()
+
+      # IO.inspect(c1)
+
+      assert c1.post_id == p1.id
+
+      c2 = PreloadTest.Repo.get(PreloadTest.Comment, c1.id)
+
+      assert c2.post_id == p1.id
+    end
   end
+
+  defp track_changes(changeset) do
+    Ecto.Changeset.prepare_changes(changeset, fn
+      %{action: :update} -> dummy(changeset)
+      %{action: :delete} -> dummy(changeset)
+      _ -> dummy(changeset)
+    end)
+  end
+
+  defp dummy(changeset), do: changeset
 end

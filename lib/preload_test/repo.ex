@@ -1,5 +1,5 @@
 defmodule PreloadTest.Repo do
-  use Ecto.Repo, otp_app: :preload_test
+  use Ecto.Repo, otp_app: :preload_test, adapter: Ecto.Adapters.Postgres
 
   @doc """
   Dynamically loads the repository url from the
