@@ -125,8 +125,6 @@ defmodule PreloadTest.MainTest do
 
   defp track_changes(changeset) do
     Ecto.Changeset.prepare_changes(changeset, fn
-      %{action: :update} -> dummy(changeset)
-      %{action: :delete} -> dummy(changeset)
       _ -> dummy(changeset)
     end)
   end
