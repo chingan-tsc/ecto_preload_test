@@ -108,7 +108,6 @@ defmodule PreloadTest.MainTest do
 
       c1 =
         Ecto.build_assoc(p1, :comments)
-        |> IO.inspect()
         |> Ecto.Changeset.cast(%{name: "some text"}, [:name, :post_id])
         |> track_changes()
         |> PreloadTest.Repo.insert!()

@@ -37,8 +37,8 @@ defmodule PreloadTest.Mixfile do
       {:phoenix_pubsub, "~> 1.0"},
       {:phoenix_ecto, "~> 4.0"},
       {:postgrex, ">= 0.0.0"},
-      {:ecto, "== 3.0.7"},
-      {:ecto_sql, "== 3.0.0"},
+      {:ecto, "== 3.1.7"},
+      {:ecto_sql, "== 3.1.6"},
       {:gettext, "~> 0.11"},
       {:cowboy, "~> 1.0"}
     ]
